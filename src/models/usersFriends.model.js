@@ -4,12 +4,12 @@ module.exports = (sequelize) => {
     return sequelize.define('UsersFriends', {
             user_id: {
                 type: DataTypes.BIGINT,
-                allowNull: false
+                primaryKey: true
             },
             friend_id: {
                 type: DataTypes.BIGINT,
-                allowNull: false
-            },
+                primaryKey: true
+            }
         }, {
             tableName: 'users_friends'
         }

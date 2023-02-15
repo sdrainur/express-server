@@ -1,9 +1,7 @@
 const db = require('../configs/sequelize.config')
-const User = db.user
 const UsersFriends = db.usersFriends
-const mailService = require('../service/mail.service')
-const bcrypt = require('bcrypt')
 const {usersFriends} = require("../configs/sequelize.config");
+const FriendsRequests = db.friendsRequests
 
 const addFriend = async (user_id, friend_id) => {
     await UsersFriends.create({
@@ -20,6 +18,45 @@ const addFriend = async (user_id, friend_id) => {
     })
 }
 
+const sendRequest = async (sender_id, receiver_id) => {
+    await FriendsRequests.create({
+        sender_id: sender_id,
+        receiver_id: receiver_id
+    }).catch(error => {
+        console.log(error)
+    })
+}
+
+const acceptRequest = async (sender_id, receiver_id) => {
+    FriendsRequests.findOne({
+        where: {
+            sender_id: sender_id,
+            receiver_id: receiver_id
+        }
+    }).then(result => {
+        addFriend(result.dataValues.sender_id, result.dataValues.receiver_id)
+        FriendsRequests.destroy({
+            where: {
+                sender_id: sender_id,
+                receiver_id: receiver_id
+            }
+        })
+    })
+}
+
+const getFriends = async (user_id) => {
+    const friends = await usersFriends.findAll({
+        where:{
+            user_id:user_id
+        },
+        raw: true
+    })
+    return friends
+}
+
 module.exports = {
-    addFriend
+    // addFriend
+    sendRequest,
+    acceptRequest,
+    getFriends
 }

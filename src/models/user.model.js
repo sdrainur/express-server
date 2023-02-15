@@ -5,14 +5,13 @@ module.exports = (sequelize) => {
             id: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
-                primaryKey: true,
-                allowNull: false
+                primaryKey: true
             },
             role: {
                 type: DataTypes.ENUM(
                     "ADMIN",
-                    "MENTOR",
-                    "USER"
+                    "USER",
+                    "MENTOR"
                 ),
                 defaultValue: "USER",
                 allowNull: false
@@ -20,11 +19,17 @@ module.exports = (sequelize) => {
             email: {
                 type: DataTypes.STRING,
                 allowNull: false,
+                unique: true,
                 validate: {
                     is: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i
                 }
             },
             isActive: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
+            isBanned: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
@@ -44,6 +49,14 @@ module.exports = (sequelize) => {
             secondName: {
                 type: DataTypes.STRING,
                 allowNull: false
+            },
+            city: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            description: {
+                type: DataTypes.TEXT,
+                allowNull: true
             }
         }
     )

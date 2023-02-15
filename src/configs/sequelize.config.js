@@ -9,6 +9,9 @@ const sequelize = new Sequelize(
     });
 const User = require('../models/user.model')(sequelize);
 const UsersFriends = require('../models/usersFriends.model')(sequelize);
+const Category = require('../models/category.model')(sequelize);
+const UsersCategories = require('../models/usersCategories.model')(sequelize);
+const FriendsRequests = require('../models/friendsRequests.model')(sequelize);
 
 sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
@@ -28,6 +31,32 @@ User.belongsToMany(User, {
     through: UsersFriends
 });
 
+Category.belongsToMany(User,{
+    as: 'usersCategories',
+    foreignKey: 'category_id',
+    through: UsersCategories,
+})
+
+User.belongsToMany(Category,{
+    as: 'usersCategories',
+    foreignKey: 'user_id',
+    through: UsersCategories,
+})
+
+
+User.belongsToMany(User, {
+    as: 'sender',
+    foreignKey: 'sender_id',
+    through: FriendsRequests
+});
+
+User.belongsToMany(User, {
+    as: 'receiver',
+    foreignKey: 'receiver_id',
+    through: FriendsRequests
+});
+
+
 sequelize.sync().catch((error) => {
 
     console.error('Unable to create table : ', error);
@@ -36,5 +65,8 @@ sequelize.sync().catch((error) => {
 module.exports = {
     sequelize: sequelize,
     user: User,
-    usersFriends: UsersFriends
+    usersFriends: UsersFriends,
+    usersCategories: UsersCategories,
+    category: Category,
+    friendsRequests: FriendsRequests
 };

@@ -31,7 +31,7 @@ findAll = async () => {
             isActive: true,
             role: 'USER'
         },
-        attributes: ['id', 'firstName', 'secondName']
+        attributes: ['id', 'firstName', 'secondName', 'role']
     })
 }
 
@@ -39,7 +39,20 @@ findByEmail = async (data) => {
     const user = await User.findOne({
         where: {
             email: data
-        }
+        },
+        attributes: ['id', 'firstName', 'secondName', 'role']
+    }).catch(error => {
+        console.log(error)
+    })
+    return user.dataValues
+}
+
+findById = async (data) => {
+    const user = await User.findOne({
+        where: {
+            id: data
+        },
+        attributes: ['id', 'firstName', 'secondName', 'role']
     }).catch(error => {
         console.log(error)
     })
@@ -69,5 +82,6 @@ module.exports = {
     createUser,
     activateUser,
     findByEmail,
+    findById,
     findAll
 }

@@ -18,6 +18,7 @@ require('./src/controllers/main.controller.js')(app)
 require('./src/controllers/signup.controller.js')(app)
 require('./src/controllers/login.controller')(app)
 require('./src/controllers/users.controller')(app)
+require('./src/controllers/friends.controller')(app)
 
 app.listen(port,()=>{
     console.log(`Server started at port ${port}...`)
