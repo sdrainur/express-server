@@ -1,7 +1,7 @@
 const {DataTypes} = require("sequelize");
 
 module.exports = sequelize => {
-    return sequelize.define('userCategory', {
+    return sequelize.define('UserCategory', {
         user_id: {
             type: DataTypes.BIGINT,
             primaryKey: true

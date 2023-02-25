@@ -12,6 +12,11 @@ const UsersFriends = require('../models/usersFriends.model')(sequelize);
 const Category = require('../models/category.model')(sequelize);
 const UsersCategories = require('../models/usersCategories.model')(sequelize);
 const FriendsRequests = require('../models/friendsRequests.model')(sequelize);
+const AvailableLessons = require('../models/availableLessons.model')(sequelize);
+const CompletedLessons = require('../models/completedLesons.model')(sequelize);
+const MentorDescription = require('../models/mentorDescription.model')(sequelize);
+const LessonsPlan = require('../models/lessonsPlan.model')(sequelize);
+
 
 sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
@@ -31,18 +36,41 @@ User.belongsToMany(User, {
     through: UsersFriends
 });
 
-Category.belongsToMany(User,{
+Category.belongsToMany(User, {
     as: 'usersCategories',
     foreignKey: 'category_id',
     through: UsersCategories,
 })
 
-User.belongsToMany(Category,{
+User.belongsToMany(Category, {
     as: 'usersCategories',
     foreignKey: 'user_id',
     through: UsersCategories,
 })
 
+User.belongsToMany(User, {
+    as: 'userAvailableLesson',
+    foreignKey: 'user_id',
+    through: AvailableLessons
+})
+
+User.belongsToMany(User, {
+    as: 'mentorAvailableLesson',
+    foreignKey: 'mentor_id',
+    through: AvailableLessons
+})
+
+User.belongsToMany(User, {
+    as: 'userCompletedLesson',
+    foreignKey: 'userId',
+    through: CompletedLessons
+})
+
+User.belongsToMany(User, {
+    as: 'mentorCompletedLesson',
+    foreignKey: 'mentorId',
+    through: CompletedLessons
+})
 
 User.belongsToMany(User, {
     as: 'sender',
@@ -56,17 +84,34 @@ User.belongsToMany(User, {
     through: FriendsRequests
 });
 
+User.hasOne(MentorDescription, {
+    as: 'mentorDescription',
+    foreignKey: 'mentorId'
+})
+
+User.hasMany(LessonsPlan, {
+    as: 'userLessonsPlan',
+    foreignKey: 'userId',
+})
+
+User.hasMany(LessonsPlan, {
+    as: 'mentorLessonsPlan',
+    foreignKey: 'mentorId',
+})
 
 sequelize.sync().catch((error) => {
-
     console.error('Unable to create table : ', error);
 });
 
 module.exports = {
-    sequelize: sequelize,
-    user: User,
-    usersFriends: UsersFriends,
-    usersCategories: UsersCategories,
-    category: Category,
-    friendsRequests: FriendsRequests
+    sequelize,
+    User,
+    UsersFriends,
+    UsersCategories,
+    Category,
+    FriendsRequests,
+    AvailableLessons,
+    CompletedLessons,
+    MentorDescription,
+    LessonsPlan
 };

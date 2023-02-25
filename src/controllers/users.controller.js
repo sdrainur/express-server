@@ -13,7 +13,17 @@ module.exports = (app) => {
     })
 
     app.get('/users/get', cors(corsOptions), authenticateToken, (req, res) => {
-        userService.findAll()
+        userService.findAllUsers()
+            .then(result => {
+                res.status(200).json(result)
+            })
+            .catch(error => {
+                res.status(400).json(error)
+            })
+    })
+
+    app.get('/mentors/get', cors(corsOptions), authenticateToken, (req, res) => {
+        userService.findAllMentors()
             .then(result => {
                 res.status(200).json(result)
             })

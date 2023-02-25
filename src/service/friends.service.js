@@ -1,7 +1,7 @@
 const db = require('../configs/sequelize.config')
-const UsersFriends = db.usersFriends
+const UsersFriends = db.UsersFriends
 const {usersFriends} = require("../configs/sequelize.config");
-const FriendsRequests = db.friendsRequests
+const FriendsRequests = db.FriendsRequests
 
 const addFriend = async (user_id, friend_id) => {
     await UsersFriends.create({

@@ -1,5 +1,5 @@
 const db = require('../configs/sequelize.config')
-const User = db.user
+const User = db.User
 const mailService = require('../service/mail.service')
 const bcrypt = require('bcrypt')
 
@@ -25,11 +25,21 @@ createUser = async (data) => {
     })
 }
 
-findAll = async () => {
+findAllUsers = async () => {
     return await User.findAll({
         where: {
             isActive: true,
             role: 'USER'
+        },
+        attributes: ['id', 'firstName', 'secondName', 'role']
+    })
+}
+
+findAllMentors = async () => {
+    return await User.findAll({
+        where: {
+            isActive: true,
+            role: 'MENTOR'
         },
         attributes: ['id', 'firstName', 'secondName', 'role']
     })
@@ -59,6 +69,16 @@ findById = async (data) => {
     return user.dataValues
 }
 
+isUser = async (id) => {
+    const user = await findById(id)
+    return user.role === 'USER'
+}
+
+isMentor = async (id) => {
+    const user = await findById(id)
+    return user.role === 'MENTOR'
+}
+
 activateUser = async (data) => {
     User.update({
             isActive: true,
@@ -83,5 +103,8 @@ module.exports = {
     activateUser,
     findByEmail,
     findById,
-    findAll
+    findAllUsers,
+    findAllMentors,
+    isUser,
+    isMentor
 }

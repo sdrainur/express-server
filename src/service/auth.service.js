@@ -1,12 +1,12 @@
 const db = require('../configs/sequelize.config')
-const User = db.user
+const User = db.User
 
 findUser = async (data) => {
     const user = await User.findOne({
         where: {
             email: data
         },
-        attributes: ['email', 'password']
+        attributes: ['id', 'email', 'password']
     }).catch(error => {
         console.log(error)
     })
