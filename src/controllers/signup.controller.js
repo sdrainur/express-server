@@ -11,7 +11,6 @@ module.exports = (app) => {
     })
 
     app.post('/signup/activate', cors(corsOptions), (req, res) => {
-        console.log(req.body.email)
         userService.activateUser({
             activationCode: req.body.activationCode
         }).then(

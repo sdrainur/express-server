@@ -7,7 +7,6 @@ module.exports = app => {
     app.get('/mentor/description/', cors(corsOptions), authenticateToken, (req, res) => {
         mentorDescriptionService.getDescription(req.body.mentorId)
             .then(result => {
-                console.log(result)
                 res.status(200).json(result)
             }).catch(error => {
             res.status(400).json(error)
@@ -24,7 +23,6 @@ module.exports = app => {
     })
 
     app.put('/mentor/description', cors(corsOptions), authenticateToken, (req, res) => {
-        console.log(req.body)
         mentorDescriptionService.updateDescription(req.body)
             .then(result => {
                 res.status(200).json({message: 'Description updated'})

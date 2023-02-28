@@ -16,7 +16,8 @@ const AvailableLessons = require('../models/availableLessons.model')(sequelize);
 const CompletedLessons = require('../models/completedLesons.model')(sequelize);
 const MentorDescription = require('../models/mentorDescription.model')(sequelize);
 const LessonsPlan = require('../models/lessonsPlan.model')(sequelize);
-
+const ChatRoom = require('../models/chatRoom.model')(sequelize)
+const Message = require('../models/message.model')(sequelize)
 
 sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
@@ -99,9 +100,25 @@ User.hasMany(LessonsPlan, {
     foreignKey: 'mentorId',
 })
 
+User.hasMany(ChatRoom, {
+    as: 'userChatRoom',
+    foreignKey: 'userId'
+})
+
+User.hasMany(ChatRoom, {
+    as: 'mentorChatRoom',
+    foreignKey: 'mentorId'
+})
+
+ChatRoom.hasMany(Message, {
+    as: 'chatRoomMessage',
+    foreignKey: 'chatRoom'
+})
+
 sequelize.sync().catch((error) => {
     console.error('Unable to create table : ', error);
 });
+
 
 module.exports = {
     sequelize,
@@ -113,5 +130,7 @@ module.exports = {
     AvailableLessons,
     CompletedLessons,
     MentorDescription,
-    LessonsPlan
+    LessonsPlan,
+    ChatRoom,
+    Message
 };

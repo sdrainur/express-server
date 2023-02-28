@@ -6,7 +6,6 @@ const authService = require('../service/auth.service')
 
 module.exports = (app) => {
     app.post('/login', cors(corsOptions), (req, res) => {
-        console.log(req.body)
         authService.findUser(req.body.email)
             .then(user => {
                 if (!user) return res.status(400).json({message: "User not exists"})
@@ -14,7 +13,9 @@ module.exports = (app) => {
                     if (err) throw err
                     if (data) {
                         res.status(200).json({
-                            'accessToken': jwt.generateAccessToken({id: user.id, email: user.email})
+                            'accessToken': jwt.generateAccessToken({id: user.id, email: user.email}),
+                            'id': user.id,
+                            'role': user.role
                         })
                     } else {
                         return res.status(401).json({message: "Invalid credential"})

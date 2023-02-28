@@ -3,9 +3,6 @@ const jwt = require('jsonwebtoken')
 dotenv.config()
 
 function generateAccessToken(data) {
-    console.log(process.env.SECRET_KEY)
-    console.log('generating')
-    console.log(data)
     return jwt.sign({
             id: data.id,
             email: data.email
@@ -17,7 +14,6 @@ function generateAccessToken(data) {
 }
 
 function authenticateToken(req, res, next) {
-    console.log(req)
     const authHeader = req.headers['authorization']
 
     const token = authHeader && authHeader.split(' ')[1]

@@ -6,7 +6,6 @@ const bcryptService = require('../service/bcrypt.service')
 
 module.exports = (app) => {
     app.get('/', cors(corsOptions), authenticateToken, (req, res) => {
-        console.log(req.headers)
         res.json({username: "Ainur"})
     })
 

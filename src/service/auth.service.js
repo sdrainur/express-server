@@ -6,7 +6,7 @@ findUser = async (data) => {
         where: {
             email: data
         },
-        attributes: ['id', 'email', 'password']
+        attributes: ['id', 'email', 'password', 'role']
     }).catch(error => {
         console.log(error)
     })

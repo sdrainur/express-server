@@ -5,7 +5,6 @@ const friendsService = require('../service/friends.service')
 
 module.exports = app => {
     app.post('/friends/send-request', cors(corsOptions), authenticateToken, (req, res) => {
-        console.log(req.body)
         friendsService.sendRequest(req.body.sender_id, req.body.receiver_id)
             .then(() => {
                 res.send()
