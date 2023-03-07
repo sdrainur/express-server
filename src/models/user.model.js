@@ -59,7 +59,7 @@ module.exports = (sequelize) => {
                 allowNull: true
             }
         }, {
-        tableName:'user'
+        tableName:'usr'
         }
     )
 }

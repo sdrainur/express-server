@@ -4,6 +4,8 @@ const usersFriendsService = require('../service/friends.service')
 const userService = require('../service/user.service')
 const {authenticateToken} = require("../middlewares/jwt.middleware");
 const jwtDecode = require("jwt-decode");
+const UserService = require("../service/user.service");
+const AuthService = require("../service/auth.service");
 
 module.exports = (app) => {
     app.get('/addFriend', cors(corsOptions), (req, res) => {
@@ -49,6 +51,17 @@ module.exports = (app) => {
             .catch(error => {
                 res.status(400).json(error)
             })
+    })
+
+    app.get('/related-users-list', cors(corsOptions), authenticateToken, (req, res) => {
+        const token = req.headers.authorization.split(' ')[1]
+        UserService.findRelativeUsers(AuthService.decodeJwt(token).id)
+            .then(result => {
+                console.log(res)
+                res.status(200).json(result)
+            }).catch(error => {
+            res.status(400).json(error)
+        })
     })
 }
 

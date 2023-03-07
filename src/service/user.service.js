@@ -2,6 +2,8 @@ const db = require('../configs/sequelize.config')
 const User = db.User
 const mailService = require('../service/mail.service')
 const bcrypt = require('bcrypt')
+const {sequelize} = require("../configs/sequelize.config");
+const {QueryTypes} = require('sequelize');
 
 const hashPassword = async (password, saltRounds = 10) => {
     try {
@@ -58,15 +60,18 @@ findByEmail = async (data) => {
 }
 
 findById = async (data) => {
-    const user = await User.findOne({
-        where: {
-            id: data
-        },
-        attributes: ['id', 'firstName', 'secondName', 'role']
-    }).catch(error => {
+    try {
+        const user = await User.findOne({
+            where: {
+                id: data
+            },
+            attributes: ['id', 'firstName', 'secondName', 'role']
+        })
+        return user.dataValues
+    } catch (error) {
         console.log(error)
-    })
-    return user.dataValues
+        return null
+    }
 }
 
 isUser = async (id) => {
@@ -75,8 +80,49 @@ isUser = async (id) => {
 }
 
 isMentor = async (id) => {
-    const user = await findById(id)
-    return user.role === 'MENTOR'
+    try {
+        const user = await findById(id)
+        return user.role === 'MENTOR'
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
+findRelativeUsers = async (userId) => {
+    const user = await findById(userId)
+    console.log(user)
+    if (user.role === 'USER') {
+        return await sequelize.query('select "id", "firstName", "secondName", "role", "uuid"\n' +
+            'from usr as u\n' +
+            'inner join chat_room cr on u.id = cr."mentorId"\n' +
+            'where cr."userId" = :userId and u.id in (select "mentorId"\n' +
+            '                 from chat_room as cr\n' +
+            '                 where cr."userId" = :userId);',
+            {
+                replacements: {
+                    userId: userId
+                },
+                type: QueryTypes.SELECT
+            }
+        )
+    } else if (user.role === 'MENTOR') {
+        return  await sequelize.query('select "id", "firstName", "secondName", "role", "uuid"\n' +
+            'from usr as u\n' +
+            'inner join chat_room cr on u.id = cr."userId"\n' +
+            'where cr."mentorId" = :userId and u.id in (select "userId"\n' +
+            '                 from chat_room as cr\n' +
+            '                 where cr."mentorId" = :userId);',
+            {
+                replacements: {
+                    userId: userId
+                },
+                type: QueryTypes.SELECT
+            }
+        )
+    } else {
+        return null
+    }
 }
 
 activateUser = async (data) => {
@@ -106,5 +152,6 @@ module.exports = {
     findAllUsers,
     findAllMentors,
     isUser,
-    isMentor
+    isMentor,
+    findRelativeUsers
 }

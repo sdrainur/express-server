@@ -1,5 +1,6 @@
 const db = require('../configs/sequelize.config')
 const User = db.User
+const jwtDecode = require('jwt-decode')
 
 findUser = async (data) => {
     const user = await User.findOne({
@@ -13,6 +14,11 @@ findUser = async (data) => {
     return user.dataValues
 }
 
-module.exports={
+decodeJwt = (token) => {
+    return jwtDecode(token);
+}
+
+module.exports = {
+    decodeJwt,
     findUser
 }

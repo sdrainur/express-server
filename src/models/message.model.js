@@ -4,7 +4,8 @@ module.exports = sequelize => {
     return sequelize.define('Message', {
         id: {
             type: DataTypes.BIGINT,
-            primaryKey: true
+            primaryKey: true,
+            autoIncrement: true
         },
         type:{
             type: DataTypes.ENUM(

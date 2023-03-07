@@ -3,7 +3,7 @@ const LessonsPlan = db.LessonsPlan
 const CompletedLessons = db.CompletedLessons
 const UserService = require('../service/user.service')
 const {Op} = require("sequelize");
-const ChatRoomService = require('../service/chatRoom.service')
+const ChatRoomService = require('./chat.service')
 
 const buyLesson = async data => {
     data.lessonEndTime = new Date(data.lessonStartTime)
