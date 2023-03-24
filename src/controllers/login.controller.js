@@ -10,7 +10,10 @@ module.exports = (app) => {
             .then(user => {
                 if (!user) return res.status(400).json({message: "User not exists"})
                 bcrypt.compare(req.body.password, user.password, (err, data) => {
-                    if (err) throw err
+                    if (err) {
+                        console.log('error')
+                        throw err
+                    }
                     if (data) {
                         res.status(200).json({
                             'accessToken': jwt.generateAccessToken({id: user.id, email: user.email}),

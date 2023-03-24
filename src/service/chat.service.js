@@ -53,16 +53,13 @@ const postTextMessage = async (chatRoomUuid, messageText, senderId) => {
 }
 
 const getMessages = async (chatRoomUuid) => {
-    const messages =  await Message.findAll({
+    return await Message.findAll({
         where: {
             chatRoom: chatRoomUuid
         }
     }, {
         raw: true
     })
-    console.log('gnern')
-    console.log(messages)
-    return messages
 }
 
 module.exports = {

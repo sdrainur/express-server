@@ -11,7 +11,9 @@ findUser = async (data) => {
     }).catch(error => {
         console.log(error)
     })
-    return user.dataValues
+    if (user) {
+        return user.dataValues
+    }
 }
 
 decodeJwt = (token) => {
