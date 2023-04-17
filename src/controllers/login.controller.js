@@ -16,7 +16,11 @@ module.exports = (app) => {
                     }
                     if (data) {
                         res.status(200).json({
-                            'accessToken': jwt.generateAccessToken({id: user.id, email: user.email}),
+                            'accessToken': jwt.generateAccessToken({
+                                id: user.id,
+                                email: user.email,
+                                role: user.role
+                            }),
                             'id': user.id,
                             'role': user.role
                         })

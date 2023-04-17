@@ -65,6 +65,21 @@ const getLessonsPlan = async (role, id) => {
     return lessonsPlan
 }
 
+const getLessonsPlanByDate = async (data) => {
+    return await LessonsPlan.findAll({
+        where: {
+            mentorId: data.userId,
+            [Op.or]: [{
+                lessonStartTime: {
+                    [Op.gte]: data.startTime,
+                    [Op.lte]: data.endTime
+                }
+            }]
+        },
+        raw: true
+    })
+}
+
 const completeLesson = async data => {
     const lesson = await LessonsPlan.findOne({
         where: {
@@ -87,5 +102,6 @@ const completeLesson = async data => {
 module.exports = {
     buyLesson,
     completeLesson,
-    getLessonsPlan
+    getLessonsPlan,
+    getLessonsPlanByDate
 }

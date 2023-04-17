@@ -20,7 +20,15 @@ decodeJwt = (token) => {
     return jwtDecode(token);
 }
 
+getAuthenticationInfo = (token) =>{
+    return{
+        userId: jwtDecode(token).id,
+        userRole: jwtDecode(token).role
+    }
+}
+
 module.exports = {
     decodeJwt,
-    findUser
+    findUser,
+    getAuthenticationInfo
 }

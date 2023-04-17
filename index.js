@@ -4,13 +4,14 @@ const port = process.env.PORT ?? 4000
 const cors = require('cors')
 const http = require('http').createServer(app)
 const {Server} = require('socket.io')
+const {origin} = require("./src/service/urls.service");
 
 app.use(express.json())
 app.use(cors())
 
 const io = new Server(http, {
     cors: {
-        origin: "http://localhost:8080",
+        origin: origin,
         methods: ["GET", "POST"]
     }
 })

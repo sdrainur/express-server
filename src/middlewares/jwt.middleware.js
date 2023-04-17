@@ -5,7 +5,8 @@ dotenv.config()
 function generateAccessToken(data) {
     return jwt.sign({
             id: data.id,
-            email: data.email
+            email: data.email,
+            role: data.role
         },
         process.env.SECRET_KEY,
         {

@@ -64,12 +64,12 @@ module.exports = (app, io) => {
             console.log(data.userId + ' left this chat')
         })
 
-        socket.on('openCall', (data)=>{
+        socket.on('openCall', (data) => {
             console.log(data)
             io.to(data.to).emit('openCall')
         })
 
-        socket.on('relay_sdp', (data)=>{
+        socket.on('relay_sdp', (data) => {
             console.log(data.to)
             console.log(data.from)
             console.log('sdp')
@@ -77,12 +77,20 @@ module.exports = (app, io) => {
             io.to(data.to).emit('session_description', data.sdp)
         })
 
-        socket.on('relay_ice', (data)=>{
+        socket.on('relay_ice', (data) => {
             // console.log(data.to)
             // console.log(data.from)
             console.log('ice')
             console.log(data.ice)
             io.to(data.to).emit('ice_candidate', data.ice)
+        })
+
+        socket.on('call', (data) => {
+            console.log(data)
+            io.to(data.to).emit('call', {
+                from: data.from,
+                type: data.type
+            })
         })
     })
 }

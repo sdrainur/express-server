@@ -5,7 +5,8 @@ const sequelize = new Sequelize(
     'qwerty',
     {
         dialect: "postgres",
-        host: "localhost"
+        host: "localhost",
+        port: 5433
     });
 const User = require('../models/user.model')(sequelize);
 const UsersFriends = require('../models/usersFriends.model')(sequelize);
