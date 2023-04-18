@@ -2,6 +2,7 @@ const cors = require('cors')
 const {corsOptions} = require("../middlewares/cors.config");
 const {authenticateToken} = require("../middlewares/jwt.middleware");
 const LessonsService = require('../service/lessons.service')
+const UserService = require('../service/user.service')
 const jwtDecode = require("jwt-decode");
 const {getAuthenticationInfo} = require("../service/auth.service");
 
@@ -57,11 +58,20 @@ module.exports = app => {
         const user = getAuthenticationInfo(req.headers.authorization.split(' ')[1])
         LessonsService.getLessonsPlanByDate({
             userId: user.userId,
+            userRole: user.userRole,
             startTime: new Date(req.params.year, req.params.month, req.params.date, 0, 0),
             endTime: new Date(req.params.year, req.params.month, req.params.date, 23, 59, 59, 0),
         }).then(result=>{
-            console.log(result);
-            res.status(200).json(result)
+            LessonsService.getLessons({
+                userId: user.userId,
+                userRole: user.userRole,
+                lessonsId: result.map((lesson)=>lesson.id)
+            }).then(lessonsInfo=>{
+                res.status(200).json(lessonsInfo)
+            }).catch(error=>{
+                console.log(error)
+                res.status(400).json(error)
+            })
         }).catch(error=>{
             console.log(error)
             res.status(400).json(error)

@@ -2,8 +2,9 @@ const db = require('../configs/sequelize.config')
 const LessonsPlan = db.LessonsPlan
 const CompletedLessons = db.CompletedLessons
 const UserService = require('../service/user.service')
-const {Op} = require("sequelize");
+const {Op, QueryTypes} = require("sequelize");
 const ChatRoomService = require('./chat.service')
+const {sequelize} = require("../configs/sequelize.config");
 
 const buyLesson = async data => {
     data.lessonEndTime = new Date(data.lessonStartTime)
@@ -66,18 +67,47 @@ const getLessonsPlan = async (role, id) => {
 }
 
 const getLessonsPlanByDate = async (data) => {
-    return await LessonsPlan.findAll({
-        where: {
-            mentorId: data.userId,
-            [Op.or]: [{
-                lessonStartTime: {
-                    [Op.gte]: data.startTime,
-                    [Op.lte]: data.endTime
-                }
-            }]
-        },
-        raw: true
-    })
+    if (data.userRole === 'MENTOR') {
+        return await LessonsPlan.findAll({
+            where: {
+                mentorId: data.userId,
+                [Op.or]: [{
+                    lessonStartTime: {
+                        [Op.gte]: data.startTime,
+                        [Op.lte]: data.endTime
+                    }
+                }]
+            },
+            raw: true
+        })
+    } else if (data.userRole === 'USER') {
+        return await LessonsPlan.findAll({
+            where: {
+                userId: data.userId,
+                [Op.or]: [{
+                    lessonStartTime: {
+                        [Op.gte]: data.startTime,
+                        [Op.lte]: data.endTime
+                    }
+                }]
+            },
+            raw: true
+        })
+    }
+}
+
+const getLessons = async (data) => {
+    return await sequelize.query('select lp."id", users."firstName", users."secondName", lp."userId",' +
+        ' lp."mentorId", lp."lessonStartTime", lp."lessonEndTime"\n' +
+        'from usr as users join (select * from lessons_plan where id in (:lessonsId))' +
+        ' lp on users.id = lp."userId";',
+        {
+            replacements: {
+                lessonsId: data.lessonsId
+            },
+            type: QueryTypes.SELECT
+        }
+    )
 }
 
 const completeLesson = async data => {
@@ -103,5 +133,6 @@ module.exports = {
     buyLesson,
     completeLesson,
     getLessonsPlan,
-    getLessonsPlanByDate
+    getLessonsPlanByDate,
+    getLessons
 }

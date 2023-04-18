@@ -74,6 +74,21 @@ findById = async (data) => {
     }
 }
 
+findAllById = async (data) => {
+    try {
+        const user = await User.findAll({
+            where: {
+                id: data
+            },
+            attributes: ['id', 'firstName', 'secondName', 'role'],
+            raw: true
+        })
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
 isUser = async (id) => {
     const user = await findById(id)
     return user.role === 'USER'
@@ -107,7 +122,7 @@ findRelativeUsers = async (userId) => {
             }
         )
     } else if (user.role === 'MENTOR') {
-        return  await sequelize.query('select "id", "firstName", "secondName", "role", "uuid"\n' +
+        return await sequelize.query('select "id", "firstName", "secondName", "role", "uuid"\n' +
             'from usr as u\n' +
             'inner join chat_room cr on u.id = cr."userId"\n' +
             'where cr."mentorId" = :userId and u.id in (select "userId"\n' +
