@@ -1,29 +1,34 @@
 const {DataTypes} = require('sequelize')
 
 module.exports = sequelize => {
-    return sequelize.define('MentorDescription', {
-        mentorId: {
+    return sequelize.define('UserDescription', {
+        userId: {
             type: DataTypes.BIGINT,
             primaryKey: true,
             autoIncrement: true,
         },
         employment: {
             type: DataTypes.STRING,
-            allowNull: false
+        },
+        jobPosition: {
+            type: DataTypes.STRING,
         },
         university: {
             type: DataTypes.STRING,
-            allowNull: true
         },
         studyField: {
             type: DataTypes.STRING,
-            allowNull: true
         },
         pricePerHour: {
             type: DataTypes.INTEGER,
-            allowNull: false
+        },
+        description: {
+            type: DataTypes.TEXT,
+        },
+        city: {
+            type: DataTypes.STRING,
         }
     }, {
-        tableName:'mentor_description'
+        tableName:'user_description'
     })
 }

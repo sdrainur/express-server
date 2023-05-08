@@ -6,6 +6,7 @@ const {authenticateToken} = require("../middlewares/jwt.middleware");
 const jwtDecode = require("jwt-decode");
 const UserService = require("../service/user.service");
 const AuthService = require("../service/auth.service");
+const {getAuthenticationInfo} = require("../service/auth.service");
 
 module.exports = (app) => {
     app.get('/addFriend', cors(corsOptions), (req, res) => {
@@ -62,6 +63,19 @@ module.exports = (app) => {
             }).catch(error => {
             res.status(400).json(error)
         })
+    })
+
+    app.post('/user/name', cors(corsOptions), authenticateToken, (req, res) => {
+        UserService.changeName({
+            id: getAuthenticationInfo(req.headers.authorization.split(' ')[1]).userId,
+            ...req.body
+        })
+            .then(result => {
+                res.status(200)
+            })
+            .catch(error => {
+                res.status(400)
+            })
     })
 }
 

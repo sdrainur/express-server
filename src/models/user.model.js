@@ -49,14 +49,6 @@ module.exports = (sequelize) => {
             secondName: {
                 type: DataTypes.STRING,
                 allowNull: false
-            },
-            city: {
-                type: DataTypes.STRING,
-                allowNull: true
-            },
-            description: {
-                type: DataTypes.TEXT,
-                allowNull: true
             }
         }, {
         tableName:'usr'

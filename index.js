@@ -22,7 +22,7 @@ require('./src/controllers/signup.controller.js')(app)
 require('./src/controllers/login.controller')(app)
 require('./src/controllers/users.controller')(app)
 require('./src/controllers/friends.controller')(app)
-require('./src/controllers/mentorDescription.controller')(app)
+require('./src/controllers/userDescription.controller')(app)
 require('./src/controllers/lessons.controller')(app)
 require('./src/controllers/chat.controller')(app, io)
 

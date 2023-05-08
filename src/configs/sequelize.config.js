@@ -15,10 +15,11 @@ const UsersCategories = require('../models/usersCategories.model')(sequelize);
 const FriendsRequests = require('../models/friendsRequests.model')(sequelize);
 const AvailableLessons = require('../models/availableLessons.model')(sequelize);
 const CompletedLessons = require('../models/completedLesons.model')(sequelize);
-const MentorDescription = require('../models/mentorDescription.model')(sequelize);
+const UserDescription = require('../models/userDescription.model')(sequelize);
 const LessonsPlan = require('../models/lessonsPlan.model')(sequelize);
 const ChatRoom = require('../models/chatRoom.model')(sequelize)
 const Message = require('../models/message.model')(sequelize)
+const Feedback = require('../models/feedback.model')(sequelize)
 
 sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
@@ -86,9 +87,9 @@ User.belongsToMany(User, {
     through: FriendsRequests
 });
 
-User.hasOne(MentorDescription, {
-    as: 'mentorDescription',
-    foreignKey: 'mentorId'
+User.hasOne(UserDescription, {
+    as: 'userDescription',
+    foreignKey: 'userId'
 })
 
 User.hasMany(LessonsPlan, {
@@ -116,6 +117,16 @@ ChatRoom.hasMany(Message, {
     foreignKey: 'chatRoom'
 })
 
+User.hasMany(Feedback, {
+    as: 'MentorFeedback',
+    foreignKey: 'mentorId'
+})
+
+User.hasMany(Feedback, {
+    as: 'AuthorFeedback',
+    foreignKey: 'authorId'
+})
+
 sequelize.sync().catch((error) => {
     console.error('Unable to create table : ', error);
 });
@@ -130,8 +141,9 @@ module.exports = {
     FriendsRequests,
     AvailableLessons,
     CompletedLessons,
-    MentorDescription,
+    UserDescription,
     LessonsPlan,
     ChatRoom,
-    Message
+    Message,
+    Feedback
 };

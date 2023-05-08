@@ -158,6 +158,22 @@ activateUser = async (data) => {
         })
 }
 
+changeName = async (data) => {
+    await User.update({
+        firstName: data.firstName,
+        secondName: data.secondName
+    }, {
+        where: {
+            id: data.id
+        },
+    })
+        .then(() => {
+            return true
+        })
+        .catch(() => {
+            return false
+        })
+}
 
 module.exports = {
     createUser,
@@ -168,5 +184,6 @@ module.exports = {
     findAllMentors,
     isUser,
     isMentor,
-    findRelativeUsers
+    findRelativeUsers,
+    changeName
 }
