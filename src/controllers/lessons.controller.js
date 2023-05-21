@@ -11,7 +11,6 @@ module.exports = app => {
         const token = req.headers.authorization.split(' ')[1]
         const data = req.body
         data.userId = jwtDecode(token).id
-        console.log(data)
         LessonsService.buyLesson(data)
             .then(result => {
                 if (result) {
@@ -28,7 +27,6 @@ module.exports = app => {
     app.get('/lesson/plan/:role/:id', cors(corsOptions), authenticateToken, (req, res) => {
         LessonsService.getLessonsPlan(req.params.role, req.params.id)
             .then(result => {
-                console.log(result)
                 res.status(200).json(result)
             }).catch(error => {
             res.status(400).json(error)
@@ -39,7 +37,6 @@ module.exports = app => {
         const user = getAuthenticationInfo(req.headers.authorization.split(' ')[1])
         LessonsService.getLessonsPlan(user.userRole, user.userId)
             .then(result => {
-                console.log(result)
                 res.status(200).json(result)
             }).catch(error => {
             res.status(400).json(error)

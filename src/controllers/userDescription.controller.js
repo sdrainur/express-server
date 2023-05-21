@@ -26,7 +26,6 @@ module.exports = app => {
 
     app.post('/user-description/', cors(corsOptions), authenticateToken, (req, res) => {
         const user = getAuthenticationInfo(req.headers.authorization.split(' ')[1])
-        console.log(user)
         mentorDescriptionService.addDescription({
             id: user.userId,
             ...req.body

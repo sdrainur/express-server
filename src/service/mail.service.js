@@ -8,7 +8,6 @@ async function sendMail(userData) {
         text: `Hello, ${userData.firstName + ' ' + userData.secondName}.\n
         Activation code: ${userData.activationCode}`
     })
-    console.log(userData.activationCode)
 }
 
 module.exports = {

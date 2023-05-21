@@ -25,6 +25,7 @@ require('./src/controllers/friends.controller')(app)
 require('./src/controllers/userDescription.controller')(app)
 require('./src/controllers/lessons.controller')(app)
 require('./src/controllers/chat.controller')(app, io)
+require('./src/controllers/feedback.controller')(app)
 
 
 

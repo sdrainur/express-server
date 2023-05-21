@@ -33,10 +33,8 @@ module.exports = (app, io) => {
     io.on('connection', (socket) => {
         const authHeader = socket.handshake.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1]
-        // const userId = socket.handshake.query.userId
 
         socket.on('join', async data => {
-            console.log(data.userId)
             if (await UserService.findById(data.userId)) {
                 socket.join(data.userId)
                 console.log(data.userId + ' joined to chat')
@@ -53,7 +51,7 @@ module.exports = (app, io) => {
         })
 
         socket.on('peerInvite', async (data) => {
-            console.log(data)
+
             io.to(data.targetId).emit('peerInvite', {
                 data
             })
@@ -65,23 +63,16 @@ module.exports = (app, io) => {
         })
 
         socket.on('openCall', (data) => {
-            console.log(data)
+
             io.to(data.to).emit('openCall')
         })
 
         socket.on('relay_sdp', (data) => {
-            console.log(data.to)
-            console.log(data.from)
-            console.log('sdp')
-            console.log(data.sdp)
+
             io.to(data.to).emit('session_description', data.sdp)
         })
 
         socket.on('relay_ice', (data) => {
-            // console.log(data.to)
-            // console.log(data.from)
-            console.log('ice')
-            console.log(data.ice)
             io.to(data.to).emit('ice_candidate', data.ice)
         })
 

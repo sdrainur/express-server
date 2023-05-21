@@ -9,7 +9,6 @@ const hashPassword = async (password, saltRounds = 10) => {
     try {
         const salt = await bcrypt.genSalt(saltRounds)
         const hash = await bcrypt.hash(password, salt)
-        console.log(hash)
         return hash
     } catch (error) {
         console.log(error)
@@ -106,7 +105,6 @@ isMentor = async (id) => {
 
 findRelativeUsers = async (userId) => {
     const user = await findById(userId)
-    console.log(user)
     if (user.role === 'USER') {
         return await sequelize.query('select "id", "firstName", "secondName", "role", "uuid"\n' +
             'from usr as u\n' +
