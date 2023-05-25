@@ -5,9 +5,12 @@ const cors = require('cors')
 const http = require('http').createServer(app)
 const {Server} = require('socket.io')
 const {origin} = require("./src/service/urls.service");
+const path = require('path');
 
+app.use('/public', express.static(path.resolve(__dirname, 'uploads/profile-photos')));
 app.use(express.json())
 app.use(cors())
+app.use(express.urlencoded({extended: false}));
 
 const io = new Server(http, {
     cors: {

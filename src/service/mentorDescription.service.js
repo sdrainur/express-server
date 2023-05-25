@@ -71,8 +71,38 @@ const updateDescription = async description => {
     }
 }
 
+const updateProfilePhoto = async (userId, fileName) => {
+    const user = await userService.findById(userId)
+    if (!user) {
+        return
+    }
+    try {
+        UserDescription.update({
+            profilePhotoName: fileName
+        }, {
+            where: {
+                userId: user.id
+            }
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+const getPhotoFileName = async (userId) =>{
+    return await UserDescription.findOne({
+        where: {
+            userId: userId
+        },
+        attributes: ['profilePhotoName'],
+        raw: true,
+    })
+}
+
 module.exports = {
     getDescription,
     addDescription,
-    updateDescription
+    updateDescription,
+    updateProfilePhoto,
+    getPhotoFileName
 }

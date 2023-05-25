@@ -27,6 +27,9 @@ module.exports = sequelize => {
         },
         city: {
             type: DataTypes.STRING,
+        },
+        profilePhotoName:{
+            type: DataTypes.STRING,
         }
     }, {
         tableName:'user_description'
