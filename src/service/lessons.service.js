@@ -15,7 +15,7 @@ const buyLesson = async data => {
         && !await isBusy(data)) {
         await LessonsPlan.create(data)
         await ChatRoomService.createChatRoom(data.userId, data.mentorId)
-
+        console.log('create')
         return true
     } else {
         return false
@@ -23,6 +23,7 @@ const buyLesson = async data => {
 }
 
 const isBusy = async data => {
+    console.log('isbusy')
     const lessons = await LessonsPlan.findAll({
         where: {
             mentorId: data.mentorId,
@@ -41,6 +42,8 @@ const isBusy = async data => {
         },
         raw: true
     })
+    console.log('lessons')
+    console.log(lessons)
     return !!lessons.length >= 1;
 }
 
@@ -129,10 +132,48 @@ const completeLesson = async data => {
     }
 }
 
+const getLessonNow = async (data) => {
+    if (data.userRole === 'MENTOR') {
+        return await LessonsPlan.findAll({
+            where: {
+                userId: data.remoteId,
+                mentorId: data.userId,
+                [Op.and]: [{
+                    lessonStartTime: {
+                        [Op.lte]: data.dateNow,
+                    },
+                    lessonEndTime:{
+                        [Op.gte]: data.dateNow
+                    }
+                }]
+            },
+            raw: true
+        })
+    } else if (data.userRole === 'USER') {
+        return await LessonsPlan.findAll({
+            where: {
+                userId: data.userId,
+                mentorId: data.remoteId,
+                [Op.and]: [{
+                    lessonStartTime: {
+                        [Op.lte]: data.dateNow,
+                    },
+                    lessonEndTime:{
+                        [Op.gte]: data.dateNow
+                    }
+                }]
+            },
+            raw: true
+        })
+    }
+}
+
+
 module.exports = {
     buyLesson,
     completeLesson,
     getLessonsPlan,
     getLessonsPlanByDate,
-    getLessons
+    getLessons,
+    getLessonNow
 }

@@ -4,7 +4,8 @@ module.exports = sequelize => {
     return sequelize.define('Category', {
         id: {
             type: DataTypes.BIGINT,
-            primaryKey: true
+            primaryKey: true,
+            autoIncrement: true,
         },
         name: {
             type: DataTypes.STRING,

@@ -89,7 +89,9 @@ findAllById = async (data) => {
 }
 
 isUser = async (id) => {
+    console.log(isUser)
     const user = await findById(id)
+    console.log(user.role)
     return user.role === 'USER'
 }
 
@@ -173,6 +175,17 @@ changeName = async (data) => {
         })
 }
 
+const changeRole = async (data) => {
+    console.log(data)
+    return !!(await User.update({
+        role: data.role,
+    }, {
+        where: {
+            id: data.userId
+        }
+    }));
+}
+
 module.exports = {
     createUser,
     activateUser,
@@ -183,5 +196,6 @@ module.exports = {
     isUser,
     isMentor,
     findRelativeUsers,
-    changeName
+    changeName,
+    changeRole
 }

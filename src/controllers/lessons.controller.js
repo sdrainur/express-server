@@ -10,6 +10,7 @@ module.exports = app => {
     app.post('/lessons/add-one', cors(corsOptions), authenticateToken, (req, res) => {
         const token = req.headers.authorization.split(' ')[1]
         const data = req.body
+        console.log(req.body)
         data.userId = jwtDecode(token).id
         LessonsService.buyLesson(data)
             .then(result => {
@@ -27,6 +28,7 @@ module.exports = app => {
     app.get('/lesson/plan/:role/:id', cors(corsOptions), authenticateToken, (req, res) => {
         LessonsService.getLessonsPlan(req.params.role, req.params.id)
             .then(result => {
+                console.log(result)
                 res.status(200).json(result)
             }).catch(error => {
             res.status(400).json(error)
@@ -37,6 +39,7 @@ module.exports = app => {
         const user = getAuthenticationInfo(req.headers.authorization.split(' ')[1])
         LessonsService.getLessonsPlan(user.userRole, user.userId)
             .then(result => {
+                console.log(result)
                 res.status(200).json(result)
             }).catch(error => {
             res.status(400).json(error)
@@ -58,20 +61,36 @@ module.exports = app => {
             userRole: user.userRole,
             startTime: new Date(req.params.year, req.params.month, req.params.date, 0, 0),
             endTime: new Date(req.params.year, req.params.month, req.params.date, 23, 59, 59, 0),
-        }).then(result=>{
+        }).then(result => {
             LessonsService.getLessons({
                 userId: user.userId,
                 userRole: user.userRole,
-                lessonsId: result.map((lesson)=>lesson.id)
-            }).then(lessonsInfo=>{
+                lessonsId: result.map((lesson) => lesson.id)
+            }).then(lessonsInfo => {
                 res.status(200).json(lessonsInfo)
-            }).catch(error=>{
+            }).catch(error => {
                 console.log(error)
                 res.status(400).json(error)
             })
-        }).catch(error=>{
+        }).catch(error => {
             console.log(error)
             res.status(400).json(error)
+        })
+    })
+
+    app.get('/lessons/has-lesson-now/:id', cors(corsOptions), authenticateToken, (req, res) => {
+        const authUser = getAuthenticationInfo(req.headers.authorization.split(' ')[1]);
+        const dateNow = Date.now();
+        LessonsService.getLessonNow({
+            userId: authUser.userId,
+            userRole: authUser.userRole,
+            remoteId: req.params.id,
+            dateNow: dateNow
+        }).then(result => {
+            res.status(200).json({'hasLessonNow': result.length!==0})
+        }).catch(error=>{
+            console.log(error)
+            res.status(200).json({'message': error})
         })
     })
 }

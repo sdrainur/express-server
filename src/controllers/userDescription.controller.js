@@ -30,6 +30,7 @@ module.exports = app => {
     app.get('/user-description/:id', cors(corsOptions), authenticateToken, (req, res) => {
         mentorDescriptionService.getDescription(req.params.id)
             .then(result => {
+                console.log(result)
                 res.status(200).json(result)
             }).catch(error => {
             res.status(400).json(error)
@@ -79,7 +80,8 @@ module.exports = app => {
 
         mentorDescriptionService.getPhotoFileName(getAuthenticationInfo(req.headers.authorization.split(' ')[1]).userId)
             .then(data=> {
-                const fileName = data.profilePhotoName
+                console.log(data)
+                const fileName = data ? data.profilePhotoName : null
                 // res.sendFile(fileName, options, (err) => {
                 //     if (err) {
                 //         console.log(err)
@@ -88,7 +90,7 @@ module.exports = app => {
                 //         console.log('Sent:', fileName);
                 //     }
                 // });
-                res.json({'imageName': fileName}).status(200)
+                res.status(200).json({'imageName': fileName})
             })
     })
 }

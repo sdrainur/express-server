@@ -6,7 +6,8 @@ const getDescription = async mentorId => {
     return await UserDescription.findOne({
         where: {
             userId: mentorId
-        }
+        },
+        raw: true
     })
 }
 
@@ -73,6 +74,8 @@ const updateDescription = async description => {
 
 const updateProfilePhoto = async (userId, fileName) => {
     const user = await userService.findById(userId)
+    console.log(fileName)
+    console.log(userId)
     if (!user) {
         return
     }

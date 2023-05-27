@@ -76,5 +76,18 @@ module.exports = (app) => {
                 res.status(400)
             })
     })
+
+    app.post('/change-role/:role', cors(corsOptions), authenticateToken, (req, res) => {
+        UserService.changeRole({
+            userId: getAuthenticationInfo(req.headers.authorization.split(' ')[1]).userId,
+            role: req.params.role
+        }).then((result)=> {
+            if (result) {
+                res.status(200).json({'message': 'Role changed'})
+            } else {
+                res.status(400).json({'message': 'Error'})
+            }
+        })
+    })
 }
 
