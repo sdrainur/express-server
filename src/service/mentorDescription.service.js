@@ -1,6 +1,7 @@
 const db = require('../configs/sequelize.config')
 const UserDescription = db.UserDescription
 const userService = require('./user.service')
+const {UsersCategories} = require("../configs/sequelize.config");
 
 const getDescription = async mentorId => {
     return await UserDescription.findOne({
@@ -12,6 +13,7 @@ const getDescription = async mentorId => {
 }
 
 const addDescription = async data => {
+    console.log('add')
     const description = await UserDescription.findOne({
         where: {
             userId: data.id
@@ -43,7 +45,7 @@ const addDescription = async data => {
             studyField: data.studyField,
             pricePerHour: data.pricePerHour,
             description: data.description,
-            city: data.city
+            city: data.city,
         }, {
             where: {
                 userId: data.id
@@ -55,9 +57,33 @@ const addDescription = async data => {
             return error
         });
     }
+
+    const userCategory = await UsersCategories.findOne({
+        where:{
+            userId: data.id
+        },
+        raw: true
+    })
+    console.log(userCategory)
+    if(!userCategory){
+        console.log('creating')
+        await UsersCategories.create({
+            userId: data.id,
+            categoryId: data.categoryId
+        })
+    } else {
+        await UsersCategories.update({
+            categoryId: data.categoryId
+        }, {
+            where: {
+                userId: data.id
+            }
+        })
+    }
 }
 
 const updateDescription = async description => {
+    console.log(description)
     const user = await userService.findById(description.mentorId)
     if (user.role === 'MENTOR') {
         UserDescription.update(description, {
@@ -92,7 +118,7 @@ const updateProfilePhoto = async (userId, fileName) => {
     }
 }
 
-const getPhotoFileName = async (userId) =>{
+const getPhotoFileName = async (userId) => {
     return await UserDescription.findOne({
         where: {
             userId: userId

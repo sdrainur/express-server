@@ -6,9 +6,9 @@ const {getAuthenticationInfo} = require("../service/auth.service");
 const multer = require('multer')
 const {UserDescription} = require("../configs/sequelize.config");
 const storage = multer.diskStorage({
-destination: function (req, file, callback) {
-    callback(null, './uploads/profile-photos');
-},
+    destination: function (req, file, callback) {
+        callback(null, './uploads/profile-photos');
+    },
     filename: function (req, file, callback) {
         callback(null, file.originalname);
     }
@@ -39,6 +39,7 @@ module.exports = app => {
 
     app.post('/user-description/', cors(corsOptions), authenticateToken, (req, res) => {
         const user = getAuthenticationInfo(req.headers.authorization.split(' ')[1])
+        console.log(req.body)
         mentorDescriptionService.addDescription({
             id: user.userId,
             ...req.body
@@ -67,21 +68,21 @@ module.exports = app => {
                 const user = getAuthenticationInfo(req.headers.authorization.split(' ')[1])
                 const fileName = req.file.filename;
                 mentorDescriptionService.updateProfilePhoto(user.userId, fileName)
-                    .then(() => res.sendStatus(200))
+                    .then(() => res.status(200).json({'message': 'Profile photo changed'}))
                     .catch(res.send(400))
             }
         })
     })
 
-    app.get('/profile-photo/:userId', cors(corsOptions), authenticateToken, (req, res, next)=>{
+    app.get('/profile-photo/:userId', cors(corsOptions), authenticateToken, (req, res, next) => {
         const options = {
             root: path.join('./uploads/profile-photos')
         }
 
         mentorDescriptionService.getPhotoFileName(getAuthenticationInfo(req.headers.authorization.split(' ')[1]).userId)
-            .then(data=> {
+            .then(data => {
                 console.log(data)
-                const fileName = data ? data.profilePhotoName : null
+                const fileName = data ? data.profilePhotoName : 'avatar.jpg'
                 // res.sendFile(fileName, options, (err) => {
                 //     if (err) {
                 //         console.log(err)

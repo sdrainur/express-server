@@ -5,12 +5,17 @@ const {authenticateToken} = require("../middlewares/jwt.middleware");
 
 
 module.exports = app => {
-    app.post('/category', cors(corsOptions), authenticateToken, (req, res)=>{
-        Category.create({
-            name: req.body.name
-        }).then(()=>{
+    app.post('/category', cors(corsOptions), (req, res)=>{
+        try {
+            Category.create({
+                name: req.body.name
+            }).then(() => {
+                res.end()
+            })
+        } catch (e){
+            console.log(e)
             res.end()
-        })
+        }
     })
 
     app.get('/categories', cors(corsOptions), authenticateToken, (req, res)=>{

@@ -8,6 +8,7 @@ const sequelize = new Sequelize(
         host: "localhost",
         port: 5433
     });
+
 const User = require('../models/user.model')(sequelize);
 const UsersFriends = require('../models/usersFriends.model')(sequelize);
 const Category = require('../models/category.model')(sequelize);
@@ -40,17 +41,17 @@ User.belongsToMany(User, {
     through: UsersFriends
 });
 
-Category.belongsToMany(User, {
-    as: 'usersCategories',
-    foreignKey: 'category_id',
-    through: UsersCategories,
-})
+// Category.belongsToMany(User, {
+//     as: 'usersCategories',
+//     foreignKey: 'category_id',
+//     through: UsersCategories,
+// })
 
-User.belongsToMany(Category, {
-    as: 'usersCategories',
-    foreignKey: 'user_id',
-    through: UsersCategories,
-})
+// User.belongsToMany(Category, {
+//     as: 'usersCategories',
+//     foreignKey: 'user_id',
+//     through: UsersCategories,
+// })
 
 User.belongsToMany(User, {
     as: 'userAvailableLesson',
@@ -126,6 +127,18 @@ User.hasMany(Feedback, {
 User.hasMany(Feedback, {
     as: 'AuthorFeedback',
     foreignKey: 'authorId'
+})
+
+Category.belongsToMany(User, {
+    as: 'CategoryHasUser',
+    foreignKey: 'categoryId',
+    through: UsersCategories
+})
+
+User.belongsToMany(Category, {
+    as: 'UserHasCategory',
+    foreignKey: 'userId',
+    through: UsersCategories
 })
 
 sequelize.sync().catch((error) => {

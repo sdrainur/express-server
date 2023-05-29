@@ -29,6 +29,7 @@
     "passport-http-bearer": "^1.0.1",
     "pg": "^8.9.0",
     "pg-hstore": "^2.3.4",
+    "pretier": "^0.0.1",
     "properties-reader": "^2.2.0",
     "sequelize": "^6.28.0",
     "socket.io": "^4.6.1",

@@ -12,7 +12,6 @@ module.exports = sequelize => {
         },
         authorId: {
             type: DataTypes.BIGINT,
-            unique: true,
             allowNull: false,
         },
         score: {

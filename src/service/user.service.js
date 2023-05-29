@@ -186,6 +186,18 @@ const changeRole = async (data) => {
     }));
 }
 
+const getAllUsersInfo = async ()=>{
+    const data = await sequelize.query('select * from (select t1.id, t1.role, t1."firstName", t1."secondName", t1.categoryId as categoryId, t1.name as categoryName, t2.avg as score\n' +
+        '               from (select usr.id, usr.role, usr."firstName", usr."secondName", c.id as categoryId, c.name\n' +
+        '                     from usr join user_categories uc on usr.id = uc."userId"\n' +
+        '                            join category c on c.id = uc."categoryId") t1\n' +
+        '                            inner join (select usr.id, avg(f.score)from usr join feedback f on usr.id = f."mentorId"                                                                                                    group by usr.id) t2\n' +
+        '                            on t1.id = t2.id) table1\n' +
+        'inner join (select "userId", "profilePhotoName" from user_description) table2\n' +
+        'on table1.id = table2."userId"', { raw: true })
+    return data[0]
+}
+
 module.exports = {
     createUser,
     activateUser,
@@ -197,5 +209,6 @@ module.exports = {
     isMentor,
     findRelativeUsers,
     changeName,
-    changeRole
+    changeRole,
+    getAllUsersInfo
 }

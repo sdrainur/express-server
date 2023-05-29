@@ -133,6 +133,7 @@ const completeLesson = async data => {
 }
 
 const getLessonNow = async (data) => {
+    console.log(data)
     if (data.userRole === 'MENTOR') {
         return await LessonsPlan.findAll({
             where: {

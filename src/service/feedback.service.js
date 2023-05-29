@@ -11,7 +11,12 @@ const addFeedback = async (data) => {
     })
     console.log(feedbackFromDb)
     if (!feedbackFromDb) {
-        console.log(data)
+        console.log({
+            mentorId: data.mentorId,
+            authorId: data.authorId,
+            score: data.score,
+            text: data.text
+        })
         if (data.score >= 1 && data.score <= 5) {
             try {
                 await Feedback.create({

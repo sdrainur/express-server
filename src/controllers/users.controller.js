@@ -7,6 +7,7 @@ const jwtDecode = require("jwt-decode");
 const UserService = require("../service/user.service");
 const AuthService = require("../service/auth.service");
 const {getAuthenticationInfo} = require("../service/auth.service");
+const {raw} = require("express");
 
 module.exports = (app) => {
     app.get('/addFriend', cors(corsOptions), (req, res) => {
@@ -88,6 +89,12 @@ module.exports = (app) => {
                 res.status(400).json({'message': 'Error'})
             }
         })
+    })
+
+    app.get('/all-users-info', cors(corsOptions), authenticateToken, async (req, res)=>{
+        const data = await UserService.getAllUsersInfo()
+        console.log(data)
+        res.status(200).json(data)
     })
 }
 

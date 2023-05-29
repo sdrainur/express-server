@@ -84,9 +84,10 @@ module.exports = app => {
         LessonsService.getLessonNow({
             userId: authUser.userId,
             userRole: authUser.userRole,
-            remoteId: req.params.id,
+            remoteId: Number(req.params.id),
             dateNow: dateNow
         }).then(result => {
+            console.log(result)
             res.status(200).json({'hasLessonNow': result.length!==0})
         }).catch(error=>{
             console.log(error)
