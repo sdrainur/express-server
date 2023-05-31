@@ -23,7 +23,6 @@ const buyLesson = async data => {
 }
 
 const isBusy = async data => {
-    console.log('isbusy')
     const lessons = await LessonsPlan.findAll({
         where: {
             mentorId: data.mentorId,
@@ -48,24 +47,70 @@ const isBusy = async data => {
 }
 
 const getLessonsPlan = async (role, id) => {
+    console.log(role)
     let lessonsPlan
     if (role === 'MENTOR') {
-        lessonsPlan = await LessonsPlan.findAll({
-            where: {
-                mentorId: id
+        // lessonsPlan = await LessonsPlan.findAll({
+        //     where: {
+        //         mentorId: id
+        //     },
+        //     raw: true
+        // })
+        lessonsPlan = [
+            ...await sequelize.query('select t1.id, "userId", "mentorId", "lessonStartTime", "lessonEndTime", "firstName", "secondName"\n' +
+            'from (select * from lessons_plan where "userId" = :userId and "lessonEndTime" > :now) t1\n' +
+            'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
+            'on t1."mentorId" = t2.id', {
+            replacements:{
+                userId: id,
+                now: new Date(Date.now())
             },
-            raw: true
-        })
+            type: QueryTypes.SELECT
+            }),
+            ...await sequelize.query('select t1.id, "userId", "mentorId", "lessonStartTime", "lessonEndTime", "firstName", "secondName"\n' +
+                'from (select * from lessons_plan where "mentorId" = :userId and "lessonEndTime" > :now) t1\n' +
+                'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
+                'on t1."mentorId" = t2.id', {
+                replacements:{
+                    userId: id,
+                    now: new Date(Date.now())
+                },
+                type: QueryTypes.SELECT
+            }),
+        ]
     } else if (role === 'USER') {
-        lessonsPlan = await LessonsPlan.findAll({
-            where: {
-                userId: id
+        // lessonsPlan = await LessonsPlan.findAll({
+        //     where: {
+        //         userId: id
+        //     },
+        //     raw: true
+        // })
+        lessonsPlan = [
+            ...await sequelize.query('select t1.id, "userId", "mentorId", "lessonStartTime", "lessonEndTime", "firstName", "secondName"\n' +
+            'from (select * from lessons_plan where "mentorId" = :userId and "lessonEndTime" > :now) t1\n' +
+            'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
+            'on t1."mentorId" = t2.id', {
+            replacements:{
+                userId: id,
+                now: new Date(Date.now())
             },
-            raw: true
-        })
+            type: QueryTypes.SELECT
+            }),
+            ...await sequelize.query('select t1.id, "userId", "mentorId", "lessonStartTime", "lessonEndTime", "firstName", "secondName"\n' +
+                'from (select * from lessons_plan where "userId" = :userId and "lessonEndTime" > :now) t1\n' +
+                'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
+                'on t1."mentorId" = t2.id', {
+                replacements:{
+                    userId: id,
+                    now: new Date(Date.now())
+                },
+                type: QueryTypes.SELECT
+            })
+            ]
     } else {
         return null
     }
+    console.log(lessonsPlan)
     return lessonsPlan
 }
 

@@ -57,8 +57,10 @@ module.exports = (app) => {
 
     app.get('/related-users-list', cors(corsOptions), authenticateToken, (req, res) => {
         const token = req.headers.authorization.split(' ')[1]
+        console.log(AuthService.decodeJwt(token).id)
         UserService.findRelativeUsers(AuthService.decodeJwt(token).id)
             .then(result => {
+                console.log(result)
                 res.status(200).json(result)
             }).catch(error => {
             res.status(400).json(error)

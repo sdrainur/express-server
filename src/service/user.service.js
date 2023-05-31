@@ -108,12 +108,16 @@ isMentor = async (id) => {
 findRelativeUsers = async (userId) => {
     const user = await findById(userId)
     if (user.role === 'USER') {
-        return await sequelize.query('select "id", "firstName", "secondName", "role", "uuid"\n' +
+        const arr1 = await sequelize.query('select t1.id, t1.role, t1."firstName", t1."secondName", t2."profilePhotoName", t1.uuid ' +
+            'from (select "id", "firstName", "secondName", "role", "uuid"\n' +
             'from usr as u\n' +
             'inner join chat_room cr on u.id = cr."mentorId"\n' +
             'where cr."userId" = :userId and u.id in (select "mentorId"\n' +
             '                 from chat_room as cr\n' +
-            '                 where cr."userId" = :userId);',
+            '                 where cr."userId" = :userId or cr."mentorId" = :userId)) t1\n' +
+            'inner join\n' +
+            '(select "userId", "profilePhotoName" from user_description) t2\n' +
+            'on t1.id = t2."userId";',
             {
                 replacements: {
                     userId: userId
@@ -121,13 +125,35 @@ findRelativeUsers = async (userId) => {
                 type: QueryTypes.SELECT
             }
         )
+        const arr2 = await sequelize.query('select t1.id, t1.role, t1."firstName", t1."secondName", t2."profilePhotoName", t1.uuid ' +
+            'from (select "id", "firstName", "secondName", "role", "uuid"\n' +
+            '            from usr as u\n' +
+            '            inner join chat_room cr on u.id = cr."userId"\n' +
+            '            where cr."mentorId" = :userId and u.id in (select "userId"\n' +
+            '                             from chat_room as cr\n' +
+            '                             where cr."mentorId" = :userId or cr."userId" = :userId)) t1\n' +
+            'inner join\n' +
+            '(select "userId", "profilePhotoName" from user_description) t2\n' +
+            'on t1.id = t2."userId";',
+            {
+                replacements: {
+                    userId: userId
+                },
+                type: QueryTypes.SELECT
+            }
+        )
+        return [...arr1, ...arr2]
     } else if (user.role === 'MENTOR') {
-        return await sequelize.query('select "id", "firstName", "secondName", "role", "uuid"\n' +
+        const arr1 = await sequelize.query('select t1.id, t1.role, t1."firstName", t1."secondName", t2."profilePhotoName", t1.uuid ' +
+            'from (select "id", "firstName", "secondName", "role", "uuid"\n' +
             'from usr as u\n' +
             'inner join chat_room cr on u.id = cr."userId"\n' +
             'where cr."mentorId" = :userId and u.id in (select "userId"\n' +
             '                 from chat_room as cr\n' +
-            '                 where cr."mentorId" = :userId);',
+            '                 where cr."mentorId" = :userId or cr."userId" = :userId)) t1\n' +
+            'inner join\n' +
+            '(select "userId", "profilePhotoName" from user_description) t2\n' +
+            'on t1.id = t2."userId"',
             {
                 replacements: {
                     userId: userId
@@ -135,6 +161,24 @@ findRelativeUsers = async (userId) => {
                 type: QueryTypes.SELECT
             }
         )
+        const arr2 = await sequelize.query('select t1.id, t1.role, t1."firstName", t1."secondName", t2."profilePhotoName", t1.uuid ' +
+            'from (select "id", "firstName", "secondName", "role", "uuid"\n' +
+            '            from usr as u\n' +
+            '            inner join chat_room cr on u.id = cr."mentorId"\n' +
+            '            where cr."userId" = :userId and u.id in (select "mentorId"\n' +
+            '                             from chat_room as cr\n' +
+            '                             where cr."userId" = :userId)) t1\n' +
+            'inner join\n' +
+            '(select "userId", "profilePhotoName" from user_description) t2\n' +
+            'on t1.id = t2."userId"',
+            {
+                replacements: {
+                    userId: userId
+                },
+                type: QueryTypes.SELECT
+            }
+        )
+        return [...arr1, ...arr2]
     } else {
         return null
     }
@@ -186,15 +230,15 @@ const changeRole = async (data) => {
     }));
 }
 
-const getAllUsersInfo = async ()=>{
+const getAllUsersInfo = async () => {
     const data = await sequelize.query('select * from (select t1.id, t1.role, t1."firstName", t1."secondName", t1.categoryId as categoryId, t1.name as categoryName, t2.avg as score\n' +
         '               from (select usr.id, usr.role, usr."firstName", usr."secondName", c.id as categoryId, c.name\n' +
         '                     from usr join user_categories uc on usr.id = uc."userId"\n' +
         '                            join category c on c.id = uc."categoryId") t1\n' +
         '                            inner join (select usr.id, avg(f.score)from usr join feedback f on usr.id = f."mentorId"                                                                                                    group by usr.id) t2\n' +
         '                            on t1.id = t2.id) table1\n' +
-        'inner join (select "userId", "profilePhotoName" from user_description) table2\n' +
-        'on table1.id = table2."userId"', { raw: true })
+        'inner join (select "userId", "profilePhotoName", "pricePerHour" from user_description) table2\n' +
+        'on table1.id = table2."userId"', {raw: true})
     return data[0]
 }
 

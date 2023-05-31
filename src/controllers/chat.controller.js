@@ -67,6 +67,12 @@ module.exports = (app, io) => {
             io.to(data.to).emit('openCall')
         })
 
+        socket.on('openAudioCall', (data) => {
+
+            io.to(data.to).emit('openAudioCall')
+        })
+
+
         socket.on('relay_sdp', (data) => {
 
             io.to(data.to).emit('session_description', data.sdp)
@@ -79,6 +85,14 @@ module.exports = (app, io) => {
         socket.on('call', (data) => {
             console.log(data)
             io.to(data.to).emit('call', {
+                from: data.from,
+                type: data.type
+            })
+        })
+
+        socket.on('audioCall', (data) => {
+            console.log(data)
+            io.to(data.to).emit('audioCall', {
                 from: data.from,
                 type: data.type
             })
