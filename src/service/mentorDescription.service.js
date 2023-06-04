@@ -13,7 +13,7 @@ const getDescription = async mentorId => {
 }
 
 const addDescription = async data => {
-    console.log('add')
+    console.log(data)
     const description = await UserDescription.findOne({
         where: {
             userId: data.id
@@ -29,7 +29,9 @@ const addDescription = async data => {
             studyField: data.studyField,
             pricePerHour: data.pricePerHour,
             description: data.description,
-            city: data.city
+            city: data.city,
+            teachingStartTime: data.teachingStartTime,
+            teachingEndTime: data.teachingEndTime,
         })
             .then(result => {
                 return result
@@ -46,6 +48,8 @@ const addDescription = async data => {
             pricePerHour: data.pricePerHour,
             description: data.description,
             city: data.city,
+            teachingStartTime: data.teachingStartTime,
+            teachingEndTime: data.teachingEndTime,
         }, {
             where: {
                 userId: data.id
@@ -100,8 +104,6 @@ const updateDescription = async description => {
 
 const updateProfilePhoto = async (userId, fileName) => {
     const user = await userService.findById(userId)
-    console.log(fileName)
-    console.log(userId)
     if (!user) {
         return
     }

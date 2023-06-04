@@ -20,7 +20,6 @@ module.exports = app => {
 
     app.get('/feedbacks/:mentorId', cors(corsOptions), authenticateToken, (req, res) => {
         feedbackService.getMentorFeedbacks(req.params.mentorId).then((result => {
-            console.log(result)
             res.status(200).json(result)
         })).catch(error => {
             res.status(400).json(error)
@@ -28,8 +27,6 @@ module.exports = app => {
     })
 
     app.delete('/feedback/:feedbackId', cors(corsOptions), authenticateToken, (req, res) => {
-        console.log(req.params.feedbackId)
-        console.log(getAuthenticationInfo(req.headers.authorization.split(' ')[1]).userId)
         feedbackService.deleteFeedback({
             id: req.params.feedbackId,
             authorId: getAuthenticationInfo(req.headers.authorization.split(' ')[1]).userId

@@ -41,8 +41,6 @@ const isBusy = async data => {
         },
         raw: true
     })
-    console.log('lessons')
-    console.log(lessons)
     return !!lessons.length >= 1;
 }
 
@@ -58,20 +56,20 @@ const getLessonsPlan = async (role, id) => {
         // })
         lessonsPlan = [
             ...await sequelize.query('select t1.id, "userId", "mentorId", "lessonStartTime", "lessonEndTime", "firstName", "secondName"\n' +
-            'from (select * from lessons_plan where "userId" = :userId and "lessonEndTime" > :now) t1\n' +
-            'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
-            'on t1."mentorId" = t2.id', {
-            replacements:{
-                userId: id,
-                now: new Date(Date.now())
-            },
-            type: QueryTypes.SELECT
+                'from (select * from lessons_plan where "userId" = :userId and "lessonEndTime" > :now) t1\n' +
+                'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
+                'on t1."mentorId" = t2.id', {
+                replacements: {
+                    userId: id,
+                    now: new Date(Date.now())
+                },
+                type: QueryTypes.SELECT
             }),
             ...await sequelize.query('select t1.id, "userId", "mentorId", "lessonStartTime", "lessonEndTime", "firstName", "secondName"\n' +
                 'from (select * from lessons_plan where "mentorId" = :userId and "lessonEndTime" > :now) t1\n' +
                 'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
                 'on t1."mentorId" = t2.id', {
-                replacements:{
+                replacements: {
                     userId: id,
                     now: new Date(Date.now())
                 },
@@ -87,26 +85,26 @@ const getLessonsPlan = async (role, id) => {
         // })
         lessonsPlan = [
             ...await sequelize.query('select t1.id, "userId", "mentorId", "lessonStartTime", "lessonEndTime", "firstName", "secondName"\n' +
-            'from (select * from lessons_plan where "mentorId" = :userId and "lessonEndTime" > :now) t1\n' +
-            'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
-            'on t1."mentorId" = t2.id', {
-            replacements:{
-                userId: id,
-                now: new Date(Date.now())
-            },
-            type: QueryTypes.SELECT
+                'from (select * from lessons_plan where "mentorId" = :userId and "lessonEndTime" > :now) t1\n' +
+                'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
+                'on t1."mentorId" = t2.id', {
+                replacements: {
+                    userId: id,
+                    now: new Date(Date.now())
+                },
+                type: QueryTypes.SELECT
             }),
             ...await sequelize.query('select t1.id, "userId", "mentorId", "lessonStartTime", "lessonEndTime", "firstName", "secondName"\n' +
                 'from (select * from lessons_plan where "userId" = :userId and "lessonEndTime" > :now) t1\n' +
                 'inner join (select "id", "firstName", "secondName" from usr) t2\n' +
                 'on t1."mentorId" = t2.id', {
-                replacements:{
+                replacements: {
                     userId: id,
                     now: new Date(Date.now())
                 },
                 type: QueryTypes.SELECT
             })
-            ]
+        ]
     } else {
         return null
     }
@@ -188,7 +186,7 @@ const getLessonNow = async (data) => {
                     lessonStartTime: {
                         [Op.lte]: data.dateNow,
                     },
-                    lessonEndTime:{
+                    lessonEndTime: {
                         [Op.gte]: data.dateNow
                     }
                 }]
@@ -204,7 +202,7 @@ const getLessonNow = async (data) => {
                     lessonStartTime: {
                         [Op.lte]: data.dateNow,
                     },
-                    lessonEndTime:{
+                    lessonEndTime: {
                         [Op.gte]: data.dateNow
                     }
                 }]
@@ -214,6 +212,40 @@ const getLessonNow = async (data) => {
     }
 }
 
+getStatistic = async (mentorId) => {
+    let lessons
+    try {
+        lessons = await LessonsPlan.findAll({
+            where: {
+                mentorId: mentorId
+            },
+            order: [['lessonStartTime', 'DESC']],
+            raw: true
+        })
+    } catch (e) {
+        console.log(e)
+    }
+    const statistic = [];
+    let tempMonth = lessons[0].lessonStartTime.getMonth()
+    let lessonsCount = 0;
+    let monthCount = 0;
+    lessons.forEach((lesson, index) => {
+        if (monthCount === 12) {
+            return
+        }
+        if (lesson.lessonStartTime.getMonth() === tempMonth && index !== lessons.length - 1) {
+            lessonsCount += 1
+        } else if (index === lessons.length - 1) {
+            statistic.push({month: tempMonth, lessonsCount: ++lessonsCount})
+        } else {
+            statistic.push({month: tempMonth, lessonsCount: lessonsCount})
+            tempMonth = lesson.lessonStartTime.getMonth()
+            lessonsCount = 1
+            monthCount++
+        }
+    })
+    return statistic
+}
 
 module.exports = {
     buyLesson,
@@ -221,5 +253,6 @@ module.exports = {
     getLessonsPlan,
     getLessonsPlanByDate,
     getLessons,
-    getLessonNow
+    getLessonNow,
+    getStatistic
 }

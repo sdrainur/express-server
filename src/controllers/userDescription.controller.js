@@ -10,11 +10,12 @@ const storage = multer.diskStorage({
         callback(null, './uploads/profile-photos');
     },
     filename: function (req, file, callback) {
-        callback(null, file.originalname);
+        callback(null, `${Date.now()}-${file.originalname}`);
     }
 })
 const upload = multer({storage: storage}).single('file');
 const path = require('path')
+const {response} = require("express");
 
 module.exports = app => {
     app.get('/user-description/', cors(corsOptions), authenticateToken, (req, res) => {
@@ -39,7 +40,6 @@ module.exports = app => {
 
     app.post('/user-description/', cors(corsOptions), authenticateToken, (req, res) => {
         const user = getAuthenticationInfo(req.headers.authorization.split(' ')[1])
-        console.log(req.body)
         mentorDescriptionService.addDescription({
             id: user.userId,
             ...req.body
@@ -61,15 +61,13 @@ module.exports = app => {
     })
 
     app.post('/profile-photo', cors(corsOptions), authenticateToken, (req, res, next) => {
-        upload(req, res, function (err) {
+        upload(req, response, function (err) {
             if (err) {
                 console.log(err)
             } else {
                 const user = getAuthenticationInfo(req.headers.authorization.split(' ')[1])
-                const fileName = req.file.filename;
+                const fileName = `${req.file.filename}`;
                 mentorDescriptionService.updateProfilePhoto(user.userId, fileName)
-                    .then(() => res.status(200).json({'message': 'Profile photo changed'}))
-                    .catch(res.send(400))
             }
         })
     })
@@ -83,14 +81,6 @@ module.exports = app => {
             .then(data => {
                 console.log(data)
                 const fileName = data ? data.profilePhotoName : 'avatar.jpg'
-                // res.sendFile(fileName, options, (err) => {
-                //     if (err) {
-                //         console.log(err)
-                //         next(err);
-                //     } else {
-                //         console.log('Sent:', fileName);
-                //     }
-                // });
                 res.status(200).json({'imageName': fileName})
             })
     })

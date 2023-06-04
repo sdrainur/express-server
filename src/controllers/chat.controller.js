@@ -37,7 +37,6 @@ module.exports = (app, io) => {
         socket.on('join', async data => {
             if (await UserService.findById(data.userId)) {
                 socket.join(data.userId)
-                console.log(data.userId + ' joined to chat')
             }
         })
 
@@ -59,7 +58,6 @@ module.exports = (app, io) => {
 
         socket.on('leave', data => {
             socket.leave(data.userId)
-            console.log(data.userId + ' left this chat')
         })
 
         socket.on('openCall', (data) => {
@@ -83,7 +81,6 @@ module.exports = (app, io) => {
         })
 
         socket.on('call', (data) => {
-            console.log(data)
             io.to(data.to).emit('call', {
                 from: data.from,
                 type: data.type
@@ -91,7 +88,6 @@ module.exports = (app, io) => {
         })
 
         socket.on('audioCall', (data) => {
-            console.log(data)
             io.to(data.to).emit('audioCall', {
                 from: data.from,
                 type: data.type

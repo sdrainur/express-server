@@ -30,6 +30,12 @@ module.exports = sequelize => {
         },
         profilePhotoName:{
             type: DataTypes.STRING,
+        },
+        teachingStartTime: {
+            type: DataTypes.DATE,
+        },
+        teachingEndTime: {
+            type: DataTypes.DATEONLY,
         }
     }, {
         tableName:'user_description'
