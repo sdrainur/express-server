@@ -6,6 +6,7 @@ const AuthService = require('../service/auth.service')
 const UserService = require('../service/user.service')
 const jwt = require("jsonwebtoken");
 const {compare} = require("bcrypt");
+const {writeFile} = require("fs");
 
 module.exports = (app, io) => {
     app.get('/messages/:uuid', cors(corsOptions), authenticateToken, (req, res) => {

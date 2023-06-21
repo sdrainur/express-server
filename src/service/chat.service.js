@@ -42,16 +42,14 @@ const postTextMessage = async (chatRoomUuid, messageText, senderId) => {
     })
     if (chatRoom !== null) {
         const message = new Message({
-            type: 'TEXT',
             chatRoom: chatRoomUuid,
-            textOrFilePath: messageText,
+            text: messageText,
             sender: senderId
         })
         await message.save()
         return message.dataValues
     }
 }
-
 const getMessages = async (chatRoomUuid) => {
     return await Message.findAll({
         where: {
@@ -67,5 +65,5 @@ module.exports = {
     createChatRoom,
     findChatRoomByUserId,
     postTextMessage,
-    getMessages
+    getMessages,
 }

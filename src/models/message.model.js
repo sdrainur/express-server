@@ -7,17 +7,10 @@ module.exports = sequelize => {
             primaryKey: true,
             autoIncrement: true
         },
-        type:{
-            type: DataTypes.ENUM(
-                'FILE',
-                'TEXT'
-            ),
-            allowNull: false
-        },
         chatRoom: {
             type: DataTypes.UUID
         },
-        textOrFilePath: {
+        text: {
             type: DataTypes.TEXT,
             allowNull: false
         },

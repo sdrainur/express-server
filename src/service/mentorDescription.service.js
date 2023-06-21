@@ -30,8 +30,10 @@ const addDescription = async data => {
             pricePerHour: data.pricePerHour,
             description: data.description,
             city: data.city,
-            teachingStartTime: data.teachingStartTime,
-            teachingEndTime: data.teachingEndTime,
+            teachingStartDate: data.teachingStartDate,
+            teachingEndDate: data.teachingEndDate,
+            teachingStartHour: data.teachingStartHour,
+            teachingEndHour: data.teachingEndHour,
         })
             .then(result => {
                 return result
@@ -48,8 +50,10 @@ const addDescription = async data => {
             pricePerHour: data.pricePerHour,
             description: data.description,
             city: data.city,
-            teachingStartTime: data.teachingStartTime,
-            teachingEndTime: data.teachingEndTime,
+            teachingStartDate: data.teachingStartDate,
+            teachingEndDate: data.teachingEndDate,
+            teachingStartHour: data.teachingStartHour,
+            teachingEndHour: data.teachingEndHour,
         }, {
             where: {
                 userId: data.id

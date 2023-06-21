@@ -5,6 +5,7 @@ const UserService = require('../service/user.service')
 const {Op, QueryTypes} = require("sequelize");
 const ChatRoomService = require('./chat.service')
 const {sequelize} = require("../configs/sequelize.config");
+const UserDescription = db.UserDescription;
 
 const buyLesson = async data => {
     data.lessonEndTime = new Date(data.lessonStartTime)
@@ -12,7 +13,8 @@ const buyLesson = async data => {
     data.lessonEndTime.setMinutes(0)
     if (await UserService.isUser(data.userId)
         && await UserService.isMentor(data.mentorId)
-        && !await isBusy(data)) {
+        && !await isBusy(data)
+        && await canTeachNow(data)) {
         await LessonsPlan.create(data)
         await ChatRoomService.createChatRoom(data.userId, data.mentorId)
         console.log('create')
@@ -42,6 +44,19 @@ const isBusy = async data => {
         raw: true
     })
     return !!lessons.length >= 1;
+}
+
+const canTeachNow = async data =>{
+    const mentorDescription = await UserDescription.findOne({
+        where: {
+            userId: data.mentorId
+        },
+        raw: true
+    })
+    return data.lessonStartTime > mentorDescription.teachingStartDate
+        && data.lessonEndTime < mentorDescription.teachingEndDate
+        && data.lessonStartTime.getHours() > mentorDescription.teachingStartHour
+        && data.lessonEndTime.getHours() < mentorDescription.teachingEndHour
 }
 
 const getLessonsPlan = async (role, id) => {
